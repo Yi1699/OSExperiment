@@ -1,14 +1,14 @@
 #include<unistd.h>
 #include<pthread.h>
 #include<stdio.h>
+#include<semaphore.h>
 void* thread_add();
 void* thread_sub();
-void wait();
-void signal();
 int value = 0;
-int s = 0;
+sem_t s;
 int main()
 {
+	sem_init(&s, 0, 1);
 	pthread_t pid1, pid2;
 	int res;
 	res = pthread_create(&pid1, NULL, thread_add, NULL);
@@ -28,10 +28,11 @@ int main()
 }
 void* thread_add()
 {
-	wait();
 	for(int i = 0; i < 100000; i++)
 	{
+		sem_wait(&s);
 		value +=100;
+		sem_post(&s);
 	}
 	return 0;
 }
@@ -39,17 +40,9 @@ void* thread_sub()
 {
 	for(int i = 0; i < 100000; i++)
 	{
+		sem_wait(&s);
 		value -= 100;
+		sem_post(&s);
 	}
-	signal();
 	return 0;
-}
-void wait()
-{
-	while(s<=0);
-	s--;
-}
-void signal()
-{
-	s++;
 }
