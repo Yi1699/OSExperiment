@@ -33,6 +33,7 @@ int main() {
         } 
         else {
             // TODO: 子进程 2
+            signal(2, SIG_IGN);
             flag = 1;
             waiting();
             signal(17, inter_handler);
@@ -42,6 +43,7 @@ int main() {
     } 
     else {
         // TODO：子进程 1
+        signal(2, SIG_IGN);
         flag = 1;
         waiting();
         signal(16, inter_handler);
