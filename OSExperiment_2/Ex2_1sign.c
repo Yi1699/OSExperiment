@@ -4,12 +4,19 @@
 #include <stdlib.h>
 #include <signal.h>
 int flag = 0;
-void inter_handler() {
+void inter_handler(int Signal) {
     flag = 0;
+    printf("\n%d stop test!\n", Signal);
+    return;
+}
+void waiting()
+{
+    while(flag);
+    return;
 }
 int main() {
     pid_t pid1=-1, pid2=-1;
-    signal(3, inter_handler);
+    signal(2, inter_handler);
     while (pid1 == -1) pid1 = fork();
     if (pid1 > 0) {
         while (pid2 == -1) pid2 = fork();
@@ -18,8 +25,8 @@ int main() {
             flag = 1;
             sleep(5);
             kill(pid1, 16);
-            kill(pid2, 17);
             wait(0);
+            kill(pid2, 17);
             wait(0);
             printf("\nParent process is killed!!\n");
             exit(0);
@@ -27,6 +34,7 @@ int main() {
         else {
             // TODO: 子进程 2
             flag = 1;
+            waiting();
             signal(17, inter_handler);
             printf("\nChild process2 is killed by parent!!\n");
             return 0;
@@ -35,6 +43,7 @@ int main() {
     else {
         // TODO：子进程 1
         flag = 1;
+        waiting();
         signal(16, inter_handler);
         printf("\nChild process1 is killed by parent!!\n");
         return 0;
