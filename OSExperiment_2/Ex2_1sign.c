@@ -17,13 +17,15 @@ void waiting()
 int main() {
     pid_t pid1=-1, pid2=-1;
     signal(3, inter_handler);
+    signal(SIGALRM, inter_handler);
     while (pid1 == -1) pid1 = fork();
     if (pid1 > 0) {
         while (pid2 == -1) pid2 = fork();
         if (pid2 > 0) {
             // TODO: 父进程
             flag = 1;
-            sleep(5);
+	    int clk = alarm(5);
+	    while(flag);
             kill(pid1, 16);
             wait(0);
             kill(pid2, 17);
