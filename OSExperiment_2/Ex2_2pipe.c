@@ -1,4 +1,6 @@
 #include <unistd.h>
+#include <sys/wait.h>
+#include <stdlib.h>
 #include <signal.h>
 #include <stdio.h>
 int pid1,pid2; // 定义两个进程变量
@@ -13,7 +15,7 @@ int main( )
         lockf(fd[1], 1, 0); // 锁定管道
         for(int i = 0; i < 2000; i++)
         {
-            write(fd[1], '1', 1);
+            write(fd[1], &c1, 1);
         }
          // 分 2000 次每次向管道写入字符’1’
         sleep(5); // 等待读进程读出数据
@@ -26,7 +28,7 @@ int main( )
             lockf(fd[1],1,0);
             for(int i = 0; i < 2000; i++)
             {
-                write(fd[1], '2', 1);
+                write(fd[1], &c2, 1);
             } // 分 2000 次每次向管道写入字符’2’
             sleep(5);
             lockf(fd[1],0,0);
